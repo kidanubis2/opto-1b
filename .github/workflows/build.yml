@@ -1,0 +1,21 @@
+   name: Build macOS installer
+   on:
+     workflow_dispatch:
+     push:
+       branches: [ main ]
+
+   jobs:
+     build:
+       runs-on: macos-latest
+       steps:
+         - uses: actions/checkout@v4
+         - name: Configure
+           run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+         - name: Build
+           run: cmake --build build --config Release -j 4
+         - name: Package
+           run: bash package.sh
+         - uses: actions/upload-artifact@v4
+           with:
+             name: OPTO-1B-macOS-installer
+             path: dist/*.pkg
